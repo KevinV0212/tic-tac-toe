@@ -1,19 +1,18 @@
+const squares = document.querySelectorAll('.square');
 // gameboard module and members that interact with board
 const gameBoard = (() => {
-    // 3 x 3 game board
-    const boardLength = 3;
-    // 3x3 board is represented by object properties
+    // 3x3 board is represented by 'board' properties
     let board = {     
-        t1: null, t2:null, t3:null,
-        m1: null, m2:null, m3:null,
-        b1: null, b2:null, b3:null
+        a1: null, a2:null, a3:null,
+        b1: null, b2:null, b3:null,
+        c1: null, c2:null, c3:null
     };
     
     const getBoard = () => board;
 
     // changes the the box at (row, col) to mark
     // not change square to inactive after
-    const setSquare = (square, mark) => board[square] = mark;
+    const setSquare = (square, mark) =>  board[square] = mark;
     
     // function that checks if board is filled
     const checkCapacity = () => {
@@ -30,22 +29,22 @@ const gameBoard = (() => {
         // check diagonal starting from top-left to bottom-right
         
         // check rows
-        if ((board.t1 == mark && board.t2 == mark && board.t3 == mark) ||
-            (board.m1 == mark && board.m2 == mark && board.m3 == mark) ||
-            (board.b1 == mark && board.b2 == mark && board.b3 == mark))
+        if ((board.a1 == mark && board.a2 == mark && board.a3 == mark) ||
+            (board.b1 == mark && board.b2 == mark && board.b3 == mark) ||
+            (board.c1 == mark && board.c2 == mark && board.c3 == mark))
         {
             return true;
         }
         // check columns
-        else if ((board.t1 == mark && board.m1 == mark && board.b1 == mark) ||
-                 (board.t2 == mark && board.m2 == mark && board.b2 == mark) ||
-                 (board.t3 == mark && board.m3 == mark && board.b3 == mark))
+        else if ((board.a1 == mark && board.b1 == mark && board.c1 == mark) ||
+                 (board.a2 == mark && board.b2 == mark && board.c2 == mark) ||
+                 (board.a3 == mark && board.b3 == mark && board.c3 == mark))
         {
             return true;
         }
         // check diagonal paths
-        else if ((board.t1 == mark && board.m2 == mark && board.b3 == mark) || 
-                 (board.b1 == mark && board.m2 == mark && board.t3 == mark))
+        else if ((board.a1 == mark && board.b2 == mark && board.c3 == mark) || 
+                 (board.c1 == mark && board.b2 == mark && board.a3 == mark))
         {
             return true;
         }
@@ -78,19 +77,34 @@ const gameEngine = (() =>{
         else 
             currentMark = mark1;
     }
-    // if square is active, changes square to currently played mark
-    // called by square event listeners
-    const makeMove = (square) =>{
-        // if square is inactive, return
-        // if not, then fill in square with currentMark
-        // then check gameBoard to see if that mark has won
-            // if so, then handle win
-        // then check if game board is filled
-        if (gameBoard.isFilled)
+
+    // event listeners for squares
+    squares.forEach(square => {
+        const position = square.getAttribute('data-position');
+        square.classList.toggle('active-square');
+        square.addEventListener('click', makeMove(position))
+    })
+
+    const makeMove = (position) =>{
+        // check for if square at position is already filled in
+        if (!gameBoard.board[position])
         {
-        handleEnd(null);
+            return;
         }
-        // if so, handle, the tie (where you clear board);
+        // check to see if the winning move was just made
+        gameBoard.setSquare(position, currentMark);
+        if (gameBoard.checkMark(currentMark) === true)
+        {
+            handleEnd(mark);
+            return;
+        }
+        // check to see if board is now full (tie)
+        else if (gameBoard.checkCapacity)
+        {
+            handleEnd(null);
+            return
+        }
+        switchTurn();
     }
 
     const handleEnd = (mark) => {
