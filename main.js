@@ -1,4 +1,5 @@
 const squares = document.querySelectorAll('.square');
+const startButton = document.querySelector('.start-button');
 const scoreMessage = document.querySelector('.score-message');
 // gameboard module and members that interact with board
 const gameBoard = (() => {
@@ -20,9 +21,9 @@ const gameBoard = (() => {
 
     // returns true if all square on board are filled
     const checkCapacity = () => {
-        for (const prop in board)
+        for (const position in board)
         {
-            if (board[prop] === null)
+            if (board[position] === null)
             {
                 return false;
             }
@@ -56,7 +57,12 @@ const gameBoard = (() => {
         }
         return false
     }
-    return {getBoard, setSquare, checkSquare, checkCapacity, checkMark};
+    const resetBoard = () => {
+        Object.keys(board).forEach(position => board[position] = null);
+    }
+
+    return {getBoard, setSquare, checkSquare, 
+            checkCapacity, checkMark, resetBoard};
 })();
 
 // create player object factory
@@ -77,10 +83,16 @@ const gameEngine = (() =>{
     let player1 = personFactory ('x');
     const mark1 = player1.getMark(); 
     let player2 = personFactory ('o');
-    const mark2= player2.getMark();
+    const mark2 = player2.getMark();
     
     let currentMark = player1.getMark();
+    let playing = false;
 
+    const startRound = () => {
+        displayController.clearDisplay();
+        playing = true;
+        setPlayOrder();
+    }
     // changes which mark can be placed
     const switchTurn = () => {
         if (currentMark === mark1) 
@@ -93,10 +105,16 @@ const gameEngine = (() =>{
         }
         console.log(currentMark);
     }
-
+    const setPlayOrder = () => {
+        if (round % 2 === 0)
+        {
+            currentMark = mark1
+        }
+        else currentMark = mark2;
+    }
     const makeMove = (position) =>{
         // check if square at position is already filled in
-        if (gameBoard.checkSquare(position))
+        if (!playing || gameBoard.checkSquare(position))
         {
             return;
         }
@@ -120,12 +138,21 @@ const gameEngine = (() =>{
         // if winner exists, increment their wins
         if (mark)
         {
+            if (mark === mark1){
+                player1.addWin();
+            }
+            else
+            {
+                player2.addWin();
+            }
             scoreMessage.textContent = `${mark} is the winner!`;
+            
         }
         else
         {
             scoreMessage.textContent = 'It is a tie';
         }
+        playing = false;
         addRound();
         // then increment games played    
     }
@@ -135,7 +162,7 @@ const gameEngine = (() =>{
 
     // function that updates game stats
     const addRound = () => round++;
-    return {getRound, makeMove}
+    return {getRound, startRound, makeMove}
     
 })();
 
@@ -154,6 +181,7 @@ const displayController = (() => {
             if (squareContent === null)
             {
                 square.classList.add('active');
+                square.textContent = '';
             }
             // if square at position is not empty, render that square 
             else
@@ -164,9 +192,16 @@ const displayController = (() => {
             }
         })
     }
-    return {setDisplay}
+    const clearDisplay = () => {
+        gameBoard.resetBoard();
+        setDisplay();
+    }
+    return {setDisplay, clearDisplay}
 })();
 
+
+// event listener for start button
+startButton.addEventListener('click', gameEngine.startRound);
 
 // event listeners for squares
 squares.forEach(square => {
