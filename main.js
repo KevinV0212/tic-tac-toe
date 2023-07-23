@@ -1,5 +1,5 @@
 const squares = document.querySelectorAll('.square');
-const scoreMessage = document.querySelectorAll('.score-message');
+const scoreMessage = document.querySelector('.score-message');
 // gameboard module and members that interact with board
 const gameBoard = (() => {
     // 3x3 board is represented by 'board' properties
@@ -13,8 +13,11 @@ const gameBoard = (() => {
 
     // changes the the box at (row, col) to mark
     // not change square to inactive after
-    const setSquare = (square, mark) =>  board[square] = mark;
+    const setSquare = (position, mark) =>  board[position] = mark;
     
+    // returns content of square at 'position'
+    const checkSquare = (position) => board[position];
+
     // returns true if all square on board are filled
     const checkCapacity = () => {
         for (const prop in board)
@@ -53,62 +56,65 @@ const gameBoard = (() => {
         }
         return false
     }
-    return {getBoard, setSquare, checkCapacity, checkMark};
+    return {getBoard, setSquare, checkSquare, checkCapacity, checkMark};
 })();
+
 // create player object factory
 const personFactory = (mark) => {
-    let wins = 0;
-    const getWins = () => wins;
+    let _mark = mark;
+    let _wins = 0;
+    const getMark = () => _mark;
+    const getWins = () => _wins;
     const addWin = () => wins++;
-    return { mark, getWins, addWin}
+    return { getMark, getWins, addWin}
 }
 
 
 const gameEngine = (() =>{
     let round = 0;
 
+    // initialize players
     let player1 = personFactory ('x');
-    const mark1 = player1.mark; 
+    const mark1 = player1.getMark(); 
     let player2 = personFactory ('o');
-    const mark2= player2.mark;
-    let currentMark = player1.mark;
-
+    const mark2= player2.getMark();
     
+    let currentMark = player1.getMark();
+
+    // changes which mark can be placed
     const switchTurn = () => {
         if (currentMark === mark1) 
+        {
             currentMark = mark2;
+        }
         else 
+        {
             currentMark = mark1;
+        }
+        console.log(currentMark);
     }
 
     const makeMove = (position) =>{
-        // check for if square at position is already filled in
-        if (!gameBoard.getBoard[position])
+        // check if square at position is already filled in
+        if (gameBoard.checkSquare(position))
         {
             return;
         }
-        // check to see if the winning move was just made
         gameBoard.setSquare(position, currentMark);
+        // check to see if the winning move was just made
         if (gameBoard.checkMark(currentMark) === true)
         {
-            handleEnd(mark);
+            handleEnd(currentMark);
             return;
         }
         // check to see if board is now full (tie)
-        else if (gameBoard.checkCapacity)
+        else if (gameBoard.checkCapacity())
         {
             handleEnd(null);
             return
         }
         switchTurn();
     }
-
-    // event listeners for squares
-    squares.forEach(square => {
-        const position = square.getAttribute('data-position');
-        square.classList.toggle('active-square');
-        square.addEventListener('click', makeMove(position))
-    })
 
     const handleEnd = (mark) => {
         // if winner exists, increment their wins
@@ -120,7 +126,7 @@ const gameEngine = (() =>{
         {
             scoreMessage.textContent = 'It is a tie';
         }
-        incrementGames();
+        addRound();
         // then increment games played    
     }
     
@@ -128,10 +134,13 @@ const gameEngine = (() =>{
     
 
     // function that updates game stats
-    const incrementGames = () => gamesPlayed++;
-    return {getRound}
+    const addRound = () => round++;
+    return {getRound, makeMove}
     
 })();
+
+
+
 
 // controls the rendering of the board on the site
 const displayController = (() => {
@@ -154,11 +163,18 @@ const displayController = (() => {
                 square.classList.remove('active');
             }
         })
-
     }
     return {setDisplay}
 })();
 
-// object to control flow of game module
 
-// function to make move. takes data properties of boxes to plot moves in array
+// event listeners for squares
+squares.forEach(square => {
+    square.classList.add('active-square');
+    square.addEventListener('click', () =>
+    {
+        const position = square.getAttribute('data-position');
+        gameEngine.makeMove(position);
+        displayController.setDisplay();
+    })
+})
