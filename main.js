@@ -14,12 +14,14 @@ const gameBoard = (() => {
     // not change square to inactive after
     const setSquare = (square, mark) =>  board[square] = mark;
     
-    // function that checks if board is filled
+    // returns true if all square on board are filled
     const checkCapacity = () => {
-        for (let prop in board)
+        for (const prop in board)
         {
-            if (!prop)
+            if (board[prop] === null)
+            {
                 return false;
+            }
         }
         return true;
     }
