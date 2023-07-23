@@ -1,4 +1,5 @@
 const squares = document.querySelectorAll('.square');
+const scoreMessage = document.querySelectorAll('.score-message');
 // gameboard module and members that interact with board
 const gameBoard = (() => {
     // 3x3 board is represented by 'board' properties
@@ -80,16 +81,9 @@ const gameEngine = (() =>{
             currentMark = mark1;
     }
 
-    // event listeners for squares
-    squares.forEach(square => {
-        const position = square.getAttribute('data-position');
-        square.classList.toggle('active-square');
-        square.addEventListener('click', makeMove(position))
-    })
-
     const makeMove = (position) =>{
         // check for if square at position is already filled in
-        if (!gameBoard.board[position])
+        if (!gameBoard.getBoard[position])
         {
             return;
         }
@@ -109,28 +103,61 @@ const gameEngine = (() =>{
         switchTurn();
     }
 
+    // event listeners for squares
+    squares.forEach(square => {
+        const position = square.getAttribute('data-position');
+        square.classList.toggle('active-square');
+        square.addEventListener('click', makeMove(position))
+    })
+
     const handleEnd = (mark) => {
         // if winner exists, increment their wins
         if (mark)
         {
-            console.log(`${mark} is the Winner`)
+            scoreMessage.textContent = `${mark} is the winner!`;
         }
         else
         {
-            console.log('Tie');
+            scoreMessage.textContent = 'It is a tie';
         }
         incrementGames();
         // then increment games played    
     }
+    
     const getRound = () => round;
     
 
     // function that updates game stats
     const incrementGames = () => gamesPlayed++;
-    return (getRound, playRound)
+    return {getRound}
     
-})
+})();
 
+// controls the rendering of the board on the site
+const displayController = (() => {
+    const setDisplay = () => {
+        boardState = gameBoard.getBoard();
+        squares.forEach(square => {
+            // log square's data-positon
+            const position = square.getAttribute('data-position');
+            // if boardState data-position is null, add active class to square
+            let squareContent = boardState[position];
+            if (squareContent === null)
+            {
+                square.classList.add('active');
+            }
+            // if square at position is not empty, render that square 
+            else
+            {
+                square.textContent = squareContent;
+                // then remove active class from that square.
+                square.classList.remove('active');
+            }
+        })
+
+    }
+    return {setDisplay}
+})();
 
 // object to control flow of game module
 

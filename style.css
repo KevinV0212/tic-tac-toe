@@ -20,8 +20,8 @@ body {
 }
 
 .game-board{
-    height:1000px;
-    width:1000px;
+    height: 500px;
+    width:500px;
 
     border:1px solid black;
 
@@ -34,6 +34,10 @@ body {
     background-color:var(--off-white);
     border: 1px solid black;
     cursor:pointer;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 .square:hover {
     filter:brightness(.8);
