@@ -6,19 +6,31 @@
 }
 
 body {
+    height: 100vh;
     display:flex;
     flex-direction:column;
+    justify-content:center;
     align-items:center;
 }
 
 .container{
+    flex: 1;
     padding:60px 40px;
 
     display:flex;
     flex-direction:column;
-    align-items:center;
+    justify-content:flex-start;
+    gap:30px;
 }
 
+.game-wrapper {
+    
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+}
 .game-board{
     height: 500px;
     width:500px;
@@ -41,4 +53,38 @@ body {
 }
 .square:hover {
     filter:brightness(.8);
+}
+
+.player-stats {
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+}
+
+.player {
+    display:grid;
+    grid-template-columns: 100px 1fr;
+    grid-template-rows: repeat(2, minmax(20px, 50px));
+    grid-template-areas:"name result"
+                        "score result";
+    align-items:center;;
+
+}
+
+.name {
+    grid-area:name;
+}
+
+.score {
+    grid-area:score;
+}
+.result {
+    grid-area:result;
+}
+
+.player.winner{
+    background-color:green;
+}
+.player.loser{
+    background-color:rgb(255, 0, 0);
 }

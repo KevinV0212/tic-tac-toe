@@ -1,6 +1,10 @@
 const squares = document.querySelectorAll('.square');
 const startButton = document.querySelector('.start-button');
+const roundInfo = document.querySelector('.round-info');
 const scoreMessage = document.querySelector('.score-message');
+const playerElement1 = document.querySelector('#player-1');
+const playerElement2 = document.querySelector('#player-2');
+
 // gameboard module and members that interact with board
 const gameBoard = (() => {
     // 3x3 board is represented by 'board' properties
@@ -71,13 +75,57 @@ const personFactory = (mark) => {
     let _wins = 0;
     const getMark = () => _mark;
     const getWins = () => _wins;
-    const addWin = () => wins++;
+    const addWin = () => _wins++;
     return { getMark, getWins, addWin}
 }
 
 
+
+
+
+
+
+// controls the rendering of the board on the site
+const displayController = (() => {
+    const setDisplay = () => {
+        roundInfo.textContent = `Round ${gameEngine.getRound()}`;
+        boardState = gameBoard.getBoard();
+        squares.forEach(square => {
+            // log square's data-positon
+            const position = square.getAttribute('data-position');
+            // if boardState data-position is null, add active class to square
+            let squareContent = boardState[position];
+            if (squareContent === null)
+            {
+                square.classList.add('active');
+                square.textContent = '';
+            }
+            // if square at position is not empty, render that square 
+            else
+            {
+                square.textContent = squareContent;
+                // then remove active class from that square.
+                square.classList.remove('active');
+            }
+        })
+    }
+    const clearDisplay = () => {
+        gameBoard.resetBoard();
+        clearResults();
+        setDisplay();   
+    }
+    const clearResults = () => {
+        playerElement1.classList.remove('winner');
+        playerElement1.classList.remove('loser');
+        playerElement2.classList.remove('winner');
+        playerElement2.classList.remove('loser');
+    }
+    return {setDisplay, clearDisplay}
+})();
+
+// controls the operation of the game
 const gameEngine = (() =>{
-    let round = 0;
+    let round = 1;
 
     // initialize players
     let player1 = personFactory ('x');
@@ -105,12 +153,14 @@ const gameEngine = (() =>{
         }
         console.log(currentMark);
     }
+
+    // sets the order of who gets the first move
     const setPlayOrder = () => {
         if (round % 2 === 0)
         {
-            currentMark = mark1
+            currentMark = mark2;
         }
-        else currentMark = mark2;
+        else currentMark = mark1;
     }
     const makeMove = (position) =>{
         // check if square at position is already filled in
@@ -119,6 +169,8 @@ const gameEngine = (() =>{
             return;
         }
         gameBoard.setSquare(position, currentMark);
+        displayController.setDisplay();
+
         // check to see if the winning move was just made
         if (gameBoard.checkMark(currentMark) === true)
         {
@@ -140,65 +192,61 @@ const gameEngine = (() =>{
         {
             if (mark === mark1){
                 player1.addWin();
+                indicateResults(player1);
+                
             }
             else
             {
                 player2.addWin();
+                indicateResults(player2);
             }
-            scoreMessage.textContent = `${mark} is the winner!`;
-            
         }
         else
         {
-            scoreMessage.textContent = 'It is a tie';
+            indicateResults(null);
         }
         playing = false;
+        
         addRound();
-        // then increment games played    
+       
     }
-    
+
+    // changes page elements to indicate result of game
+    const indicateResults = (winner) => {
+        const p1_score = document.querySelector('#player-1 .score')
+        const p2_score = document.querySelector('#player-2 .score')
+
+        if (winner === player1)
+        {
+            playerElement1.classList.add('winner');
+            playerElement2.classList.add('loser');
+            scoreMessage.textContent = `Player 1 is the winner!`;
+        }
+        else if (winner === player2)
+        {
+            playerElement2.classList.add('winner');
+            playerElement1.classList.add('loser');
+            scoreMessage.textContent = `Player 2 is the winner!`;
+        }
+        else
+        {
+            playerElement1.classList.add('tie');
+            playerElement2.classList.add('tie');
+            scoreMessage.textContent = `It is a tie`;
+        }
+        p1_score.textContent = player1.getWins();
+        p2_score.textContent = player2.getWins();
+    }
+
     const getRound = () => round;
     
+    // function that changes styling of a player to show that they won.
 
     // function that updates game stats
     const addRound = () => round++;
     return {getRound, startRound, makeMove}
     
 })();
-
-
-
-
-// controls the rendering of the board on the site
-const displayController = (() => {
-    const setDisplay = () => {
-        boardState = gameBoard.getBoard();
-        squares.forEach(square => {
-            // log square's data-positon
-            const position = square.getAttribute('data-position');
-            // if boardState data-position is null, add active class to square
-            let squareContent = boardState[position];
-            if (squareContent === null)
-            {
-                square.classList.add('active');
-                square.textContent = '';
-            }
-            // if square at position is not empty, render that square 
-            else
-            {
-                square.textContent = squareContent;
-                // then remove active class from that square.
-                square.classList.remove('active');
-            }
-        })
-    }
-    const clearDisplay = () => {
-        gameBoard.resetBoard();
-        setDisplay();
-    }
-    return {setDisplay, clearDisplay}
-})();
-
 
 // event listener for start button
 startButton.addEventListener('click', gameEngine.startRound);
@@ -210,6 +258,5 @@ squares.forEach(square => {
     {
         const position = square.getAttribute('data-position');
         gameEngine.makeMove(position);
-        displayController.setDisplay();
     })
 })
