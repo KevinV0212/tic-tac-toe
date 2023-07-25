@@ -86,9 +86,10 @@ const personFactory = (mark) => {
     let _name = "PLAYER";
     const getMark = () => _mark;
     const setName = (prompt) => _name = window.prompt(prompt); 
+    const getName = () => _name;
     const getWins = () => _wins;
     const addWin = () => _wins++;
-    return { getMark, setName, getWins, addWin}
+    return { getMark, setName, getName, getWins, addWin}
 }
 
 
@@ -257,7 +258,7 @@ const gameEngine = (() =>{
             result1.textContent= "😎";
             playerElement2.classList.add('loser');
             result2.textContent = "😡";
-            scoreMessage.textContent = `Player 1 is the winner!`;
+            scoreMessage.textContent = `${player1.getName()} is the winner!`;
             result1
         }
         else if (winner === player2)
@@ -266,7 +267,7 @@ const gameEngine = (() =>{
             result2.textContent = "😎";
             playerElement1.classList.add('loser');
             result1.textContent = "😡";
-            scoreMessage.textContent = `Player 2 is the winner!`;
+            scoreMessage.textContent = `${player2.getName()} is the winner!`;
         }
         else
         {

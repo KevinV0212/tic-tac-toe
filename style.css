@@ -165,15 +165,10 @@ button:active {
 }
 
 .name {
-    grid-area:name;
+    font-size:2rem;
+    text-decoration:underline;
 }
 
-.score {
-    grid-area:score;
-}
-.result {
-    grid-area:result;
-}
 
 .player.has-turn {
     background-color:var(--base-light);
