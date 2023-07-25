@@ -1,11 +1,17 @@
 const boardElement = document.querySelector('.game-board');
 const squares = document.querySelectorAll('.square');
+
 const startButton = document.querySelector('.start-button');
 const roundInfo = document.querySelector('.round-info');
+
 const playerElement1 = document.querySelector('#player-1');
-const playerElement2 = document.querySelector('#player-2');
+const name1 = document.querySelector('#player-1 > .name');
 const result1 = document.querySelector('#player-1 > .result');
+
+const playerElement2 = document.querySelector('#player-2');
+const name2 = document.querySelector('#player-2 > .name');
 const result2 = document.querySelector('#player-2 > .result');
+
 const scoreMessage = document.querySelector('.score-message');
 
 
@@ -77,10 +83,12 @@ const gameBoard = (() => {
 const personFactory = (mark) => {
     let _mark = mark;
     let _wins = 0;
+    let _name = "PLAYER";
     const getMark = () => _mark;
+    const setName = (prompt) => _name = window.prompt(prompt); 
     const getWins = () => _wins;
     const addWin = () => _wins++;
-    return { getMark, getWins, addWin}
+    return { getMark, setName, getWins, addWin}
 }
 
 
@@ -139,9 +147,14 @@ const gameEngine = (() =>{
 
     // initialize players
     let player1 = personFactory ('x');
-    const mark1 = player1.getMark(); 
+    name1.textContent = player1.setName('Enter Player 1');
+    const mark1 = player1.getMark();
+     
+
     let player2 = personFactory ('o');
+    name2.textContent = player2.setName('Enter Player 2');
     const mark2 = player2.getMark();
+
     
     let currentMark = player1.getMark();
     let playing = false;
