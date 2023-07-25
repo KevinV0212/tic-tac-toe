@@ -1,9 +1,13 @@
+const boardElement = document.querySelector('.game-board');
 const squares = document.querySelectorAll('.square');
 const startButton = document.querySelector('.start-button');
 const roundInfo = document.querySelector('.round-info');
-const scoreMessage = document.querySelector('.score-message');
 const playerElement1 = document.querySelector('#player-1');
 const playerElement2 = document.querySelector('#player-2');
+const result1 = document.querySelector('#player-1 > .result');
+const result2 = document.querySelector('#player-2 > .result');
+const scoreMessage = document.querySelector('.score-message');
+
 
 // gameboard module and members that interact with board
 const gameBoard = (() => {
@@ -119,6 +123,9 @@ const displayController = (() => {
         playerElement1.classList.remove('loser');
         playerElement2.classList.remove('winner');
         playerElement2.classList.remove('loser');
+        result1.textContent = '';
+        result2.textContent = '';
+        scoreMessage.textContent = '';
     }
     return {setDisplay, clearDisplay}
 })();
@@ -138,6 +145,7 @@ const gameEngine = (() =>{
 
     const startRound = () => {
         displayController.clearDisplay();
+        boardElement.classList.add('playable');
         playing = true;
         setPlayOrder();
     }
@@ -146,12 +154,16 @@ const gameEngine = (() =>{
         if (currentMark === mark1) 
         {
             currentMark = mark2;
+            playerElement2.classList.add('has-turn');
+            playerElement1.classList.remove('has-turn');
+
         }
         else 
         {
             currentMark = mark1;
+            playerElement1.classList.add('has-turn');
+            playerElement2.classList.remove('has-turn');
         }
-        console.log(currentMark);
     }
 
     // sets the order of who gets the first move
@@ -159,8 +171,13 @@ const gameEngine = (() =>{
         if (round % 2 === 0)
         {
             currentMark = mark2;
+            playerElement2.classList.add('has-turn');
         }
-        else currentMark = mark1;
+        else 
+        {
+            currentMark = mark1;
+            playerElement1.classList.add('has-turn');
+        }
     }
     const makeMove = (position) =>{
         // check if square at position is already filled in
@@ -206,7 +223,9 @@ const gameEngine = (() =>{
             indicateResults(null);
         }
         playing = false;
-        
+        boardElement.classList.remove('playable');
+        playerElement1.classList.remove('has-turn');
+        playerElement2.classList.remove('has-turn');
         addRound();
        
     }
@@ -219,19 +238,26 @@ const gameEngine = (() =>{
         if (winner === player1)
         {
             playerElement1.classList.add('winner');
+            result1.textContent= "😎";
             playerElement2.classList.add('loser');
+            result2.textContent = "😡";
             scoreMessage.textContent = `Player 1 is the winner!`;
+            result1
         }
         else if (winner === player2)
         {
             playerElement2.classList.add('winner');
+            result2.textContent = "😎";
             playerElement1.classList.add('loser');
+            result1.textContent = "😡";
             scoreMessage.textContent = `Player 2 is the winner!`;
         }
         else
         {
             playerElement1.classList.add('tie');
+            result1.textContent= "🫤";
             playerElement2.classList.add('tie');
+            result2.textContent = "🫤";
             scoreMessage.textContent = `It is a tie`;
         }
         p1_score.textContent = player1.getWins();
