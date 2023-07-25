@@ -134,9 +134,6 @@ const displayController = (() => {
         playerElement2.classList.remove('winner');
         playerElement2.classList.remove('loser');
         playerElement2.classList.remove('tie');
-        playerElement1.classList.remove('has-turn');
-        playerElement2.classList.remove('has-turn');
-
 
         result1.textContent = '';
         result2.textContent = '';
@@ -191,12 +188,16 @@ const gameEngine = (() =>{
         if (round % 2 === 0)
         {
             currentMark = mark2;
-            playerElement2.classList.add('has-turn');
+            playerElement2.classList.add('has-turn');            
+            playerElement1.classList.remove('has-turn');
+
         }
         else 
         {
             currentMark = mark1;
             playerElement1.classList.add('has-turn');
+            playerElement2.classList.remove('has-turn');
+
         }
     }
     const makeMove = (position) =>{
