@@ -6,12 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tic-Tac-Toe</title>
     <link rel="stylesheet" href="./style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis&family=Oleo+Script&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dosis&display=swap" rel="stylesheet">
     <script src="./main.js" defer></script>
 </head>
 <body>
     <div class="container">
+        <div class="header">Tic-Tac-Toe</div>
         <div class="game-wrapper">
-            <div class="score-message"></div>
+            
             <div class="game-board">
                 <div class="square" data-position="a1"></div>
                 <div class="square" data-position="a2"></div>
@@ -28,7 +36,9 @@
                 <button class="start-button">Play</button>
             </div>
         </div>
-        
+        <div class="result-info">
+            <h2 class="score-message"></h2>
+        </div>
         <div class="player-stats">
             <div id="player-1" class="player">
                 <div class="name">Player 1</div>

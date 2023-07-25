@@ -121,8 +121,11 @@ const displayController = (() => {
     const clearResults = () => {
         playerElement1.classList.remove('winner');
         playerElement1.classList.remove('loser');
+        playerElement1.classList.remove('tie');
         playerElement2.classList.remove('winner');
         playerElement2.classList.remove('loser');
+        playerElement2.classList.remove('tie');
+
         result1.textContent = '';
         result2.textContent = '';
         scoreMessage.textContent = '';

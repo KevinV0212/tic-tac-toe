@@ -1,7 +1,11 @@
 :root {
     --off-white:#f5f5f5;
-    --gray: #A3A3A3;
+    --base-light:#003FA3;
+    --base:#002152;
+    --base-dark:#001029;
     --has-turn-color: rgb(189, 223, 255);
+    --win-color:#008F3E;
+    --lose-color:#99002B;
 }
 *{
     margin:0; padding:0;
@@ -10,6 +14,14 @@
 
 body {
     height: 100vh;
+    
+    background-color:var(--base);
+    
+    font-family: 'Dosis', sans-serif;
+    font-family: 'Oleo Script', cursive;
+    color:var(--off-white);
+
+
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -23,15 +35,18 @@ body {
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
-    gap:30px;
+    gap:10px;
 }
 
-.score-message{
-    display:block;
-    height:1.25em;   
+.header {
+    text-align:center;
+
+    font-size:2.5rem;
+
 }
 .game-wrapper {
-    
+    padding:5px;
+
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -42,19 +57,63 @@ body {
     height: 500px;
     width:500px;
 
-    border:1px solid black;
+    border:1px solid var(--off-white);
 
     display:grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
 
+.game-info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:20px;
+}
+
+.round-info {
+    height: 2rem;
+    padding: 5px 10px;
+
+    font-size: 1.5rem;
+}
+
+button {
+    flex:none;
+    appearance:none;
+
+    display:block;
+    padding:10px 20px;
+    min-width:100px;
+
+    background-color:var(--base-light);
+    border:none;
+    border-radius:5px;
+    box-shadow: 0px 0px 7px 2px var(--off-white);
+
+
+    font-size:1.25rem;
+    font-family: 'Dosis', sans-serif;
+    font-family: 'Oleo Script', cursive;
+    color:var(--off-white);
+    cursor:pointer;
+}
+
+button:hover {
+    filter:brightness(.8);
+    box-shadow:none;
+}
+button:active {
+    filter:brightness(.6);
+    box-shadow:none;
+}
 .square {
-    border: 1px solid black;
+    border: 1px solid var(--off-white);
     
-    background-color:var(--gray);
+    background-color:var(--base-dark);
     text-align:center;
     font-size:6em;
+    font-family: 'Dosis', sans-serif;
 
     display:flex;
     justify-content:center;
@@ -63,28 +122,44 @@ body {
 
 
 .game-board.playable .square {
-    background-color:var(--off-white);
+    background-color:var(--base-light);
+}
+.game-board.playable .square.active:hover {
+    filter:brightness(.7);
     cursor:pointer;
 }
-.game-board.playable .square:hover {
-    filter:brightness(.8);
+.game-board.playable .square.active:active {
+    filter:brightness(.5);
+    cursor:pointer;
 }
 
+
+.score-message{
+    height:1.25em;
+    padding:30px;
+    
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
 
 .player-stats {
     display:flex;
 
     justify-content:space-between;
-    gap:30px;
+    gap: 30px;
 }
 
 .player {
+    flex: 1;
     padding:20px 40px;
 
+    border-radius:10px;
     font-size:1.5rem;
 
     display:flex;
     flex-direction:column;
+    justify-content:center;
     align-items:center;
     gap:20px;
 }
@@ -101,18 +176,22 @@ body {
 }
 
 .player.has-turn {
-    background-color:var(--has-turn-color);
+    background-color:var(--base-light);
 }
 .player.winner{
-    background-color:green;
-    color:white;
+    background-color:var(--base-light);
+    box-shadow: 0 0 5px 5px var(--off-white);
 }
-.player.loser{
-    background-color:rgb(255, 0, 0);
-    color:white;
+.player.loser, .player.tie{
+    background-color:var(--base-light);
+    filter: brightness(.9=8);
 }
 
 .result {
+    display:block;
+    height:70px;
+    padding:10px;
+
     text-align:end;
     font-size:3rem;
 }
