@@ -134,6 +134,9 @@ const displayController = (() => {
         playerElement2.classList.remove('winner');
         playerElement2.classList.remove('loser');
         playerElement2.classList.remove('tie');
+        playerElement1.classList.remove('has-turn');
+        playerElement2.classList.remove('has-turn');
+
 
         result1.textContent = '';
         result2.textContent = '';
